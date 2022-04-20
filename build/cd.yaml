@@ -18,7 +18,7 @@ steps:
 
   - id: push image to google container registry (gcr)
     name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'eu.gcr.io/customer-zeg/one-click-deploy-test:0.0.1' ]
+    args: [ 'push', 'eu.gcr.io/professionalserviceslabs/one-click-deploy-test:0.0.1' ]
 
 #  - id: decrypt secrets.yaml.enc
 #    name: 'gcr.io/cloud-builders/gcloud'
