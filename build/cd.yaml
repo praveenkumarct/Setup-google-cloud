@@ -1,0 +1,56 @@
+steps:
+  - id: install dependencies
+    name: node:16-alpine3.14
+    entrypoint: npm
+    args: [ 'ci' ]
+
+  - id: run tests
+    name: node:16-alpine3.14
+    entrypoint: npm
+    args: [ 'test' ]
+    env:
+      - 'SPHERE_PROJECT_KEY=one-click-deploy-test'
+    secretEnv: [ 'SPHERE_CLIENT_ID', 'SPHERE_CLIENT_SECRET' ]
+
+  - id: docker image build
+    name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '--file=Dockerfile', '--tag=eu.gcr.io/professionalserviceslabs/one-click-deploy-test:0.0.1', '.' ]
+
+  - id: push image to google container registry (gcr)
+    name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'eu.gcr.io/customer-zeg/one-click-deploy-test:0.0.1' ]
+
+#  - id: decrypt secrets.yaml.enc
+#    name: 'gcr.io/cloud-builders/gcloud'
+#    args: [ 'kms', 'decrypt',
+#            '--ciphertext-file=secrets.yaml.enc', '--plaintext-file=secrets.yaml',
+#            '--location=global',
+#            '--keyring=zeg-keyring-$_ENVIRONMENT','--key=zeg-cli-key-$_ENVIRONMENT' ]
+#    dir: 'k8s/cronjob/$_ENVIRONMENT'
+#
+#  - id: clone k8s-charts
+#    name: 'gcr.io/cloud-builders/git'
+#    args: [ 'clone', 'https://github.com/commercetools/k8s-charts.git' ]
+#
+#  - id: get cluster credentials
+#    name: 'gcr.io/cloud-builders/gcloud'
+#    args: [ 'container', 'clusters', 'get-credentials', '$_CLUSTER_ID', '--zone=europe-west1-d' ]
+#
+#  - id: deploy zeg-order-export
+#    name: 'gcr.io/customer-zeg/helm:v2.17.0'
+#    entrypoint: 'helm'
+#    args: [ 'upgrade', '--install', '--wait',
+#            'zeg-order-export',
+#            '-f', 'k8s/cronjob/$_ENVIRONMENT/values.yaml',
+#            '-f', 'k8s/cronjob/$_ENVIRONMENT/zeg-order-export/values.yaml',
+#            '-f', 'k8s/cronjob/$_ENVIRONMENT/secrets.yaml',
+#            '--set-string', 'image.tag=$_TAG', 'k8s-charts/charts/cronjob' ]
+#
+#availableSecrets:
+#  secretManager:
+#    - versionName: projects/55100016241/secrets/INTEGRATION_PROJECT_CTP_CLIENT_ID/versions/1
+#      env: 'SPHERE_CLIENT_ID'
+#    - versionName: projects/55100016241/secrets/INTEGRATION_PROJECT_CTP_CLIENT_SECRET/versions/1
+#      env: 'SPHERE_CLIENT_SECRET'
+#
+#timeout: 2700s # 45 min
