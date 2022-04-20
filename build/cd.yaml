@@ -4,13 +4,13 @@ steps:
     entrypoint: npm
     args: [ 'ci' ]
 
-  - id: run tests
-    name: node:16-alpine3.14
-    entrypoint: npm
-    args: [ 'test' ]
-    env:
-      - 'SPHERE_PROJECT_KEY=one-click-deploy-test'
-    secretEnv: [ 'SPHERE_CLIENT_ID', 'SPHERE_CLIENT_SECRET' ]
+#  - id: run tests
+#    name: node:16-alpine3.14
+#    entrypoint: npm
+#    args: [ 'test' ]
+#    env:
+#      - 'SPHERE_PROJECT_KEY=one-click-deploy-test'
+#    secretEnv: [ 'SPHERE_CLIENT_ID', 'SPHERE_CLIENT_SECRET' ]
 
   - id: docker image build
     name: 'gcr.io/cloud-builders/docker'
